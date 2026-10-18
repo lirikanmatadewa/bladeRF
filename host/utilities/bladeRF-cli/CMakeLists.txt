@@ -299,6 +299,21 @@ if(BUILD_BLADERF_CLI_DOCUMENTATION)
             set(MAN_INSTALL_DIR share/man)
         endif(NOT DEFINED MAN_INSTALL_DIR)
 
+        set(BLADERF_CLI_HELP2MAN_COMMAND ./bladeRF-cli)
+        if(CMAKE_CROSSCOMPILING AND CMAKE_CROSSCOMPILING_EMULATOR)
+            string(REPLACE ";" " " BLADERF_CLI_HELP_EMULATOR
+                "${CMAKE_CROSSCOMPILING_EMULATOR}")
+            set(BLADERF_CLI_HELP2MAN_COMMAND
+                "${CMAKE_CURRENT_BINARY_DIR}/bladeRF-cli-help")
+            configure_file(bladeRF-cli-help.sh.in
+                "${BLADERF_CLI_HELP2MAN_COMMAND}" @ONLY)
+            execute_process(COMMAND chmod 0755 "${BLADERF_CLI_HELP2MAN_COMMAND}"
+                RESULT_VARIABLE BLADERF_CLI_HELP_CHMOD_RESULT)
+            if(NOT BLADERF_CLI_HELP_CHMOD_RESULT EQUAL 0)
+                message(FATAL_ERROR "Could not make the bladeRF-cli help wrapper executable.")
+            endif()
+        endif()
+
         # Build actual man page
         add_custom_command(
             OUTPUT bladeRF-cli.1
@@ -309,7 +324,7 @@ if(BUILD_BLADERF_CLI_DOCUMENTATION)
                 --opt-include=${CMAKE_CURRENT_BINARY_DIR}/src/cmd/doc/cmd_help.man
                 --opt-include=${CMAKE_CURRENT_SOURCE_DIR}/../doc/include_man/common.h2m
                 --output=bladeRF-cli.1
-                ./bladeRF-cli
+                ${BLADERF_CLI_HELP2MAN_COMMAND}
             WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         )
 

@@ -11,6 +11,17 @@ export DH_VERBOSE=1
 DEB_VERSION_STRING ?= $(shell dpkg-parsechangelog | grep ^Version: | cut -d' ' -f2-)
 
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+DEBIAN_ARM64_TOOLCHAIN = cmake/toolchains/debian-arm64.cmake
+ifeq ($(BLADERF_FIRMWARE_MODE),source)
+BLADERF_ENABLE_FX3_BUILD = ON
+BLADERF_FX3_ARGS = -DFX3_INSTALL_PATH=$(BLADERF_FX3_INSTALL_PATH)
+else
+BLADERF_ENABLE_FX3_BUILD = OFF
+endif
+ifeq ($(DEB_HOST_ARCH),arm64)
+DEBIAN_CROSS_FLAGS = -DCMAKE_TOOLCHAIN_FILE=$(DEBIAN_ARM64_TOOLCHAIN) \
+	'-DCMAKE_CROSSCOMPILING_EMULATOR=/usr/bin/qemu-aarch64;-L;/usr/aarch64-linux-gnu'
+endif
 
 ifneq (,$(findstring SNAPSHOT,$(DEB_VERSION_STRING)))
 	# Format is like: 0.9.0+1SNAPSHOT20131027041813-gitedc468d~saucy
@@ -39,9 +50,51 @@ override_dh_auto_configure:
 							-DCMAKE_INSTALL_LIBDIR="lib/${DEB_HOST_MULTIARCH}" \
 							-DCMAKE_INSTALL_DOCDIR="share/doc/libbladerf-doc" \
 							-DENABLE_HOST_BUILD=ON \
-							-DENABLE_FX3_BUILD=OFF \
+							-DENABLE_FX3_BUILD=$(BLADERF_ENABLE_FX3_BUILD) \
+							$(BLADERF_FX3_ARGS) \
 							-DBUILD_DOCUMENTATION=ON \
-							-DUDEV_RULES_PATH=/lib/udev/rules.d
+							-DBUILD_LIBBLADERF_DOC_EXAMPLES=ON \
+							-DBUILD_BLADERF_CLI_DOCUMENTATION=ON \
+							-DTEST_LIBBLADERF=ON \
+							-DBUILD_BLADERF_FSK=ON \
+							-DUDEV_RULES_PATH=/lib/udev/rules.d \
+							$(DEBIAN_CROSS_FLAGS)
+
+override_dh_auto_build:
+	dh_auto_build
+	DEB_HOST_ARCH=$(DEB_BUILD_ARCH) \
+	DEB_HOST_GNU_TYPE=$(DEB_BUILD_GNU_TYPE) \
+	DEB_HOST_MULTIARCH=$(DEB_BUILD_MULTIARCH) \
+		pybuild --build --dir=host/libraries/libbladeRF_bindings/python --interpreter=python3
+	mkdir -p /workspace/wheels
+	DEB_HOST_ARCH=$(DEB_BUILD_ARCH) \
+	DEB_HOST_GNU_TYPE=$(DEB_BUILD_GNU_TYPE) \
+	DEB_HOST_MULTIARCH=$(DEB_BUILD_MULTIARCH) \
+		python3 host/libraries/libbladeRF_bindings/python/setup.py bdist_wheel --dist-dir=/workspace/wheels
+	if [ "$(BLADERF_FIRMWARE_MODE)" = source ]; then \
+		firmware_image=$$(find obj-$(DEB_HOST_GNU_TYPE)/fx3_firmware -type f -path '*/output/bladeRF_fw_v*.img' -print -quit); \
+		test -n "$$firmware_image" || { echo 'FX3 ExternalProject did not produce a firmware image.' >&2; exit 1; }; \
+		install -D -m 0644 "$$firmware_image" debian/firmware/bladeRF_fw.img; \
+		firmware_sha256=$$(sha256sum "$$firmware_image" | cut -d' ' -f1); \
+		jq --arg sha256 "$$firmware_sha256" '.firmware |= map(if .name == "fx3" then .version = "source" | .md5 = null | .sha256 = $$sha256 else . end)' debian/firmware/firmware-manifest.json > debian/firmware/firmware-manifest.json.tmp; \
+		mv debian/firmware/firmware-manifest.json.tmp debian/firmware/firmware-manifest.json; \
+	fi
+
+override_dh_auto_install:
+	dh_auto_install
+	DEB_HOST_ARCH=$(DEB_BUILD_ARCH) \
+	DEB_HOST_GNU_TYPE=$(DEB_BUILD_GNU_TYPE) \
+	DEB_HOST_MULTIARCH=$(DEB_BUILD_MULTIARCH) \
+		pybuild --install --dir=host/libraries/libbladeRF_bindings/python --interpreter=python3 --dest-dir=debian/tmp
+	install -D -m 0644 debian/firmware/bladeRF_fw.img debian/tmp/usr/share/Nuand/bladeRF/bladeRF_fw.img
+	install -D -m 0644 debian/firmware/hostedx40.rbf debian/tmp/usr/share/Nuand/bladeRF/hostedx40.rbf
+	install -D -m 0644 debian/firmware/hostedx115.rbf debian/tmp/usr/share/Nuand/bladeRF/hostedx115.rbf
+	install -D -m 0644 debian/firmware/hostedxA4.rbf debian/tmp/usr/share/Nuand/bladeRF/hostedxA4.rbf
+	install -D -m 0644 debian/firmware/hostedxA5.rbf debian/tmp/usr/share/Nuand/bladeRF/hostedxA5.rbf
+	install -D -m 0644 debian/firmware/hostedxA9.rbf debian/tmp/usr/share/Nuand/bladeRF/hostedxA9.rbf
+
+override_dh_missing:
+	dh_missing --fail-missing
 
 %:
-	dh $@ 
+	dh $@

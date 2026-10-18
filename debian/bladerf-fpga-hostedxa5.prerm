@@ -1,10 +1,4 @@
 #!/bin/sh -e
 
-RBFFILE=/usr/share/Nuand/bladeRF/hostedxA5.rbf
-
-if [ "$1" = "remove" -o "$1" = "purge" ]; then
-	echo "Deleting downloaded FPGA bitstream: $RBFFILE"
-	rm -f $RBFFILE
-fi
-
+# Firmware is owned and removed by dpkg; do not delete it here.
 #DEBHELPER#

@@ -1,0 +1,53 @@
+{
+    "schema": 1,
+    "firmware": [
+        {
+            "name": "fx3",
+            "filename": "bladeRF_fw.img",
+            "url": "https://www.nuand.com/fx3/bladeRF_fw_v2.6.0.img",
+            "version": "2.6.0",
+            "md5": "7cc51b4eedebf54dd01be83745d1c59f",
+            "sha256": "a5f65bffd51107c09e36b45eda77593d900d975388bcfd83a9b6c3c45240b54a"
+        },
+        {
+            "name": "hostedx40",
+            "filename": "hostedx40.rbf",
+            "url": "https://www.nuand.com/fpga/v0.16.0/hostedx40.rbf",
+            "version": "0.16.0",
+            "md5": "f3d0e55aa4cae485df6d3c20004b7742",
+            "sha256": "b21a50c87bccf915b8b1630354dbd07c87c17892c6011ec086bbf9e50dedc15a"
+        },
+        {
+            "name": "hostedx115",
+            "filename": "hostedx115.rbf",
+            "url": "https://www.nuand.com/fpga/v0.16.0/hostedx115.rbf",
+            "version": "0.16.0",
+            "md5": "a7f25be8abdab3835e734599eb846ea4",
+            "sha256": "7bb0c7b0fb9976cd631b679352aff3383ab371dad29306452140984363711fdf"
+        },
+        {
+            "name": "hostedxA4",
+            "filename": "hostedxA4.rbf",
+            "url": "https://www.nuand.com/fpga/v0.16.0/hostedxA4.rbf",
+            "version": "0.16.0",
+            "md5": "276a74b748d699a9fc348babd34af19c",
+            "sha256": "c0d1ed6a38900629ec7983ddd27b2d438ca7a7d2b897d37364ff0c2511210ace"
+        },
+        {
+            "name": "hostedxA5",
+            "filename": "hostedxA5.rbf",
+            "url": "https://www.nuand.com/fpga/v0.16.0/hostedxA5.rbf",
+            "version": "0.16.0",
+            "md5": "be0909dc27b48a08c54db33675130f27",
+            "sha256": "b85b413c0b305a04bd3fdb604ff6c77a1eac427f07d72251920a60b6a2f5b062"
+        },
+        {
+            "name": "hostedxA9",
+            "filename": "hostedxA9.rbf",
+            "url": "https://www.nuand.com/fpga/v0.16.0/hostedxA9.rbf",
+            "version": "0.16.0",
+            "md5": "1ab3bc8bdcf16a5f0ddf3fcdbaa6556b",
+            "sha256": "3004467110e2b2790c8f6128f998c2149905a88eed91a87f11af3db524d60c65"
+        }
+    ]
+}

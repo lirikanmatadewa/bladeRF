@@ -1,0 +1,2 @@
+#!/bin/sh
+exec @BLADERF_CLI_HELP_EMULATOR@ "@CMAKE_RUNTIME_OUTPUT_DIRECTORY@/bladeRF-cli" "$@"

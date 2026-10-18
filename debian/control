@@ -1,10 +1,12 @@
 Source: bladerf
 Priority: optional
 Maintainer: Nuand LLC <bladeRF@nuand.com>
-Build-Depends: debhelper (>=9), cmake (>= 2.8.5), pkg-config, doxygen,
- libusb-1.0-0-dev (>= 1.0.12), libedit-dev, libncurses5-dev,
- git, help2man, pandoc, libcurl4-openssl-dev
-Standards-Version: 4.1.4
+Build-Depends: debhelper-compat (= 13), cmake, pkg-config, doxygen,
+ libusb-1.0-0-dev, libedit-dev, libncurses-dev,
+ git, help2man, pandoc, libcurl4-openssl-dev,
+ dh-sequence-python3, python3-all:any, python3-cffi, python3-setuptools,
+ qemu-user, jq, python3-wheel
+Standards-Version: 4.6.2
 Section: comm
 Homepage: https://www.nuand.com/bladeRF
 Vcs-Git: git://github.com/Nuand/bladeRF.git
@@ -42,7 +44,7 @@ Description: Nuand bladeRF software-defined radio device (header files)
 
 Package: libbladerf-doc
 Section: doc
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}
 Description: Nuand bladeRF software-defined radio device (API documentation)
  The Nuand bladeRF is an open-source software-defined radio (SDR) system,
@@ -54,9 +56,8 @@ Description: Nuand bladeRF software-defined radio device (API documentation)
 
 Package: libbladerf-udev
 Section: libs
-Architecture: any
-Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}, udev
+Architecture: all
+Depends: ${misc:Depends}, udev
 Conflicts: libbladerf0
 Description: Nuand bladeRF software-defined radio device (header files)
  The Nuand bladeRF is an open-source software-defined radio (SDR) system,
@@ -85,16 +86,14 @@ Description: Nuand bladeRF software-defined radio device (tools)
 
 Package: bladerf-fpga-hostedx40
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-firmware
 Provides: bladerf-fpga
 Description: Nuand bladeRF FPGA bitstream downloader (hostedx40)
- This package will, at the time of installation, download an appropriate
- FPGA bitstream for using the Nuand bladeRF in a hosted (USB-controlled)
- configuration.  The FPGA bitstream will be downloaded from
- https://nuand.com/fpga/ and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned FPGA bitstream for hosted
+ (USB-controlled) operation, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream is for the bladeRF x40 with the Altera Cyclone IV
  EP4CE40 FPGA.
@@ -104,16 +103,14 @@ Description: Nuand bladeRF FPGA bitstream downloader (hostedx40)
 
 Package: bladerf-fpga-hostedx115
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-firmware
 Provides: bladerf-fpga
 Description: Nuand bladeRF FPGA bitstream downloader (hostedx115)
- This package will, at the time of installation, download an appropriate
- FPGA bitstream for using the Nuand bladeRF in a hosted (USB-controlled)
- configuration.  The FPGA bitstream will be downloaded from
- https://nuand.com/fpga/ and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned FPGA bitstream for hosted
+ (USB-controlled) operation, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream is for the bladeRF x115 with the Altera Cyclone IV
  EP4CE115 FPGA.
@@ -123,16 +120,14 @@ Description: Nuand bladeRF FPGA bitstream downloader (hostedx115)
 
 Package: bladerf-fpga-hostedxa4
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-firmware
 Provides: bladerf-fpga
 Description: Nuand bladeRF FPGA bitstream downloader (hostedxA4)
- This package will, at the time of installation, download an appropriate
- FPGA bitstream for using the Nuand bladeRF in a hosted (USB-controlled)
- configuration.  The FPGA bitstream will be downloaded from
- https://nuand.com/fpga/ and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned FPGA bitstream for hosted
+ (USB-controlled) operation, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream is for the bladeRF 2.0 Micro xA4 with the Altera Cyclone V
  5CEBA4 FPGA.
@@ -142,16 +137,14 @@ Description: Nuand bladeRF FPGA bitstream downloader (hostedxA4)
 
 Package: bladerf-fpga-hostedxa5
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-firmware
 Provides: bladerf-fpga
 Description: Nuand bladeRF FPGA bitstream downloader (hostedxA5)
- This package will, at the time of installation, download an appropriate
- FPGA bitstream for using the Nuand bladeRF in a hosted (USB-controlled)
- configuration.  The FPGA bitstream will be downloaded from
- https://nuand.com/fpga/ and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned FPGA bitstream for hosted
+ (USB-controlled) operation, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream is for the bladeRF 2.0 Micro xA5 with the Altera Cyclone V
  5CEBA5 FPGA.
@@ -161,16 +154,14 @@ Description: Nuand bladeRF FPGA bitstream downloader (hostedxA5)
 
 Package: bladerf-fpga-hostedxa9
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-firmware
 Provides: bladerf-fpga
 Description: Nuand bladeRF FPGA bitstream downloader (hostedxA9)
- This package will, at the time of installation, download an appropriate
- FPGA bitstream for using the Nuand bladeRF in a hosted (USB-controlled)
- configuration.  The FPGA bitstream will be downloaded from
- https://nuand.com/fpga/ and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned FPGA bitstream for hosted
+ (USB-controlled) operation, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream is for the bladeRF 2.0 Micro xA9 with the Altera Cyclone V
  5CEBA9 FPGA.
@@ -180,19 +171,33 @@ Description: Nuand bladeRF FPGA bitstream downloader (hostedxA9)
 
 Package: bladerf-firmware-fx3
 Section: comm
-Architecture: any
-Depends: wget, ${shlibs:Depends}, ${misc:Depends}
+Architecture: all
+Depends: ${misc:Depends}
 Recommends: bladerf
 Suggests: bladerf-fpga
 Provides: bladerf-firmware
 Description: Nuand bladeRF firmware downloader (FX3)
- This package will, at the time of installation, download an appropriate
- firmware image for using the Nuand bladeRF with a Cypress FX3 USB
- controller.  The image will be downloaded from https://nuand.com/fx3/
- and saved to /usr/share/Nuand/bladeRF.
+ This package contains a version-pinned firmware image for the Nuand
+ bladeRF Cypress FX3 USB controller, installed at /usr/share/Nuand/bladeRF.
  .
  This bitstream will work for either the Nuand bladeRF x40 or the x115,
  as well as the bladeRF 2.0 Micro xA4 or xA5 or xA9.
  .
  Note that this will not upgrade the bladeRF itself.  That can be done
  with the bladeRF-cli utility.
+
+Package: python3-bladerf
+Section: python
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-cffi, libbladerf2
+Description: Python 3 bindings for the Nuand bladeRF
+ This package provides the CFFI-based Python 3 bindings and bladerf-tool
+ command-line utility for libbladeRF.
+
+Package: bladerf-matlab
+Section: comm
+Architecture: all
+Depends: ${misc:Depends}
+Description: MATLAB bindings and examples for the Nuand bladeRF
+ This package provides the MATLAB/Octave binding source, examples, and
+ tests. A compatible MATLAB or Octave runtime is not included.
